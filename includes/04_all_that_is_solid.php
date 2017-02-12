@@ -125,8 +125,8 @@
 <div id="page">
 	<div class="image">
 		<?php 
-		$image = get_field("atis_image");
-		image_object($image); 
+		$image = get_field("project_images")[0]["project_image"];
+		image_object( $image ); 
 		?>
 	</div>
 </div>
@@ -138,8 +138,8 @@
 </div>
 
 <?php 
-$file_mp3 = get_field("atis_mp3"); 
-$file_ogg = get_field("atis_ogg");
+$file_mp3 = get_field("project_files")[0]["project_file"];
+$file_ogg = get_field("project_files")[1]["project_file"];
 ?>
 
 <audio id="audio" loop>

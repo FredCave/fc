@@ -7,6 +7,7 @@
 		width: 55%;
 		position: relative;
 		z-index: 99;
+		padding-bottom: 120px;
 	}
 
 		@media ( max-width: 1280px ) {
@@ -15,6 +16,10 @@
 				margin-left: 10%;
 			}	
 		}
+	section {
+		/*border: 1px solid red;*/
+		margin-bottom: 36px;
+	}
 
 	.pdf {
 		margin: 35px 90px 14px 90px;
@@ -53,7 +58,7 @@
 	    line-height: 1.25;
 	    padding: 8px;
 	    overflow-x: hidden;
-	    margin-bottom: 120px;
+/*	    margin-bottom: 120px;*/
 		}
 		
 	.text p {
@@ -79,21 +84,37 @@
 			
 </style>
 
-<!-- PDF -->		
-<div class="pdf">
-	<img src="<?php bloginfo('template_url'); ?>/assets/img/black_arrow.png" class="black_arrow"/>
-	
-	<?php $file = get_field("nl_file"); ?>
-	<a href="<?php echo $file["url"]; ?>" target="_blank">
-		<?php 
-		$image = get_field("nl_image"); 
-		image_object($image);
-		?>
-	</a>
+<?php
+// LOOP THROUGH NIGHT LIGHT PROJECTS
+$i = 0;
+while ( $i < 3 ) { ?>
+	<section>		
+		<div class="pdf">
+			<img src="<?php bloginfo('template_url'); ?>/assets/img/black_arrow.png" class="black_arrow"/>
+			
+			<?php $file = get_field("project_files")[$i]["project_file"]; ?>
+			<a href="<?php echo $file["url"]; ?>" target="_blank">
+				<?php 
+				$image = get_field("project_images")[$i]["project_image"]; 
+				image_object($image);
+				?>
+			</a>
 
-</div>
+		</div>
 
-<!-- TEXT -->
-<div class="text">
-	<?php the_field("nl_text"); ?>	
-</div>
+		<!-- TEXT -->
+		<div class="text">
+			<?php $text = get_field("project_texts")[$i]["project_text"];
+			echo $text; ?>	
+		</div>
+	</section>
+	<?php
+	$i++;
+}
+
+
+?>
+
+
+
+

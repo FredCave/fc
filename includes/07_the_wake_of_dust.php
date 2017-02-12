@@ -466,9 +466,9 @@ $(document).ready(function(){
 
 <div id="image_wrapper">
 	<?php
-	if ( have_rows("twod_images") ) {
-		while ( have_rows("twod_images") ) : the_row("twod_images");
-			$image = get_sub_field("twod_image");
+	if ( have_rows("project_images") ) {
+		while ( have_rows("project_images") ) : the_row("project_images");
+			$image = get_sub_field("project_image");
 			image_object($image);
 		endwhile;
 	}

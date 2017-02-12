@@ -94,6 +94,7 @@ b, strong {
     width: 120px;
     height: 120px;  
     position: fixed;
+    z-index: 999999;
     bottom: 50px;
     right: 50px;  
     cursor: pointer;  
@@ -119,7 +120,7 @@ b, strong {
     width: 160px;
     height: 160px;
     position: fixed;
-    z-index: 99999;
+    z-index: 9999;
     top: -200px;
     left: -200px;
 /*    box-shadow: 5px 5px 20px #8B4513;*/
@@ -156,45 +157,23 @@ b, strong {
     border-bottom: 0px;
 }
 
-#large_image, #large_image_2 {
-    position: fixed;
-    z-index: 9999;
-    width: 100%;
-    height: 100vh;
-    top: 0;
-/*    -webkit-mask-image:-webkit-gradient(linear, right top, left bottom, from(rgba(0,0,0,1)), to(rgba(0,0,0,0)));*/
-    pointer-events: none;
-    overflow: hidden;
-    opacity: 0;
-    transition: opacity 2s;
-}
-
-#large_image_2 {
-/*    -webkit-mask-image:-webkit-gradient(linear, left top, left bottom, from(rgba(0,0,0,1)), to(rgba(0,0,0,0)));*/
-}
-
-
-#large_image img, #large_image_2 img {
-    width: 100%;
-    height: auto;
-}
-
 #sidebar {
-    background-color: #333;
+    background-color: rgba(0,0,0,0.75);
     height: 100%;
-    width: 33%;
+    width: 50%;
     position: fixed;
+    z-index: 99999;
     top: 0;
-    right: -34%;
+    right: -51%;
     transition: right 2s;
 }
 
 #text_wrapper {
 /*    border: 1px solid red;*/
-    width: 90%;
-    left: 5%;
+    width: 80%;
+    left: 10%;
     position: absolute;
-    top: 12px;
+    top: 24px;
 }
 
 .text_block {
@@ -202,14 +181,15 @@ b, strong {
     position: relative;
     color: white;
     font-family: "cmr", serif;
+    line-height: 1.6;
     font-size: 0.95em;
     letter-spacing: 0.05em;
+    margin-bottom: 24px;
 }
 
 .text_block p {
 /*    border: 1px solid blue;*/
-    transition: transform 1s;
-    margin-bottom: 12px;
+    transition: transform 0.5s;
 }
 
 .loading:after {

@@ -9,8 +9,6 @@
 
 <?php
 
-//echo $post->post_name;
-
 // EXHIBITION
 if ( has_tag("exhibition") ) {
 	include("includes/01_exhibition.php");
@@ -20,16 +18,12 @@ else if ( $post->post_name == "once-removed" ) {
 	include("includes/02_once_removed.php");
 }
 // NIGHT LIGHT
-else if ( strpos( $post->post_name, "night-light" ) !== false ) {
+else if ( $post->post_name == "night-light" ) {
 	include("includes/03_night_light.php");
 }
 // ALL THAT IS SOLID
 else if ( $post->post_name == "all-that-is-solid" ) {
 	include("includes/04_all_that_is_solid.php");
-}
-// NARCISSUS DISSOLVE
-else if ( $post->post_name == "narcissus-dissolve" ) {
-	include("includes/05_narcissus_dissolve.php");
 }
 // SUBLIMATIONS
 else if ( $post->post_name == "sublimations" ) {

@@ -9,13 +9,12 @@ var Data = {
     sources : ["http://localhost:8888/fredcave/projects/the-electronic-cottage/",
                 "http://localhost:8888/fredcave/projects/dogwood-ii/",
                 "http://localhost:8888/fredcave/projects/once-removed/",
-                "http://localhost:8888/fredcave/projects/night-light-1/",
-                "http://localhost:8888/fredcave/projects/night-light-2/",
-                "http://localhost:8888/fredcave/projects/night-light-3/",
+                "http://localhost:8888/fredcave/projects/night-light/",
                 "http://localhost:8888/fredcave/projects/all-that-is-solid/",
-                "http://localhost:8888/fredcave/projects/narcissus-dissolve/",
                 "http://localhost:8888/fredcave/projects/the-wake-of-dust/",
                 "http://localhost:8888/fredcave/projects/eden-book/"],
+
+    nextSrc : 0,
 
     nextLayer : 1,
 
@@ -39,6 +38,8 @@ var Page = {
         console.log("Page.init");
 
         this.bindEvents();
+
+        this.srcInit();
 
         // THIS PLACES HYPERLINK AFTER IFRAME HAS LOADED
         this.nextLayerInit();
@@ -67,6 +68,21 @@ var Page = {
 
     },
 
+    srcInit: function () {
+
+        console.log("Page.srcInit");
+
+        // SHUFFLE SRCs
+        var sources = Data.sources;
+        for ( var i = sources.length - 1; i > 0; i-- ) {
+            var j = Math.floor(Math.random() * (i + 1));
+            var temp = sources[i];
+            sources[i] = sources[j];
+            sources[j] = temp;
+        }
+
+    },
+
     infoReset: function () {
 
         console.log("Page.infoReset");
@@ -83,10 +99,17 @@ var Page = {
         console.log("Page.nextLayerInit");
 
         // GET NEXT IFRAME SRC
-        var index = Math.floor( Math.random() * Data.sources.length ),
+        var index = Data.nextSrc;
             nextSrc = Data.sources[index];
 
-        console.log( 50, nextSrc );
+        // IF LAST IN ARRAY
+        if ( index === Data.sources.length ) {
+            Data.nextSrc = 0;
+        } else {
+            Data.nextSrc++;
+        }
+
+        console.log( 50, nextSrc, Data.nextSrc );
 
         // LOAD NEXT SRC IN IFRAME
         var getNextLayer = Data.nextLayer,
@@ -218,6 +241,7 @@ var Page = {
             // IF FIRST TIME
             if ( !Data.sidebarText ) {
                 this.textInit();
+                Data.sidebarText = true;
             } 
         } else {
             $("#sidebar").css({"right":""}).removeClass("visible");           
@@ -232,96 +256,87 @@ var Page = {
         var blocks;
 
         // LOADING BLOCK
-        $("#text_wrapper").append("<div class='text_block'><p class='loading'>Receiving</p></div>");
+        $("#text_wrapper").append("<div class='text_block'><p class='loading'>receiving</p></div>");
 
-        // LOAD EXTERNAL SCRIPTS HERE
-
-        // 2000 DELAY
-        setTimeout( function () {
-            // GET STATIC TEXT
-            $.ajax({
-                url: "wp-json/wp/v2/projects/112",
-                success: function ( data ) {
-                    // PARSE BLOCK BY BLOCK
-                    blocks = Page.textParse(data.acf.project_texts[0]["project_text"]);
-                    // START CONVERSATION
-                    Page.conversation( blocks, 0 );
-                }
-            });
+        // INSERT CONTENTS OF NARCISSUS JSON INTO CONVERSATION
+        setTimeout( function(){
+            Page.conversation( narcissus, 0 );
         }, 2000 );
-
-        // LOOP THROUGH BLOCKS
-            // FOR EACH:
-                // APPEND TO PAGE
-                // SEND TO BOT 
-                // ECHO RESPONSE
-                // RUN HEIGHT CHECKER 
-                    // IF TOO HIGH:
-                        // SHIFT FIRST ELEMENT
-
-
-
-
-
 
     },
 
     parseForBot: function ( string ) {
 
-        console.log("Page.parseForBot", string);
+        console.log("Page.parseForBot");
 
         str = string.replace( " ", "+" );
         return str;
 
     },
 
-    conversation: function ( array, instance ) {
+    ajaxCall: function ( text, object ) {
+
+        console.log("Page.ajaxCall");
+
+        $.ajax( {
+            method: "GET",
+            dataType: "text",
+            url: "http://www.botlibre.com/rest/botlibre/form-chat?application=_4581146104707647883&instance=15464920&message=" + Page.parseForBot(text),
+            success: function ( data ) {
+                                
+                // PARSE RESULT
+                var replyXML = $.parseXML( data ),
+                    replyText = $(replyXML).find("message").html();
+
+                Page.responseParse( replyText, object );
+
+            },
+            error: function () {
+
+                console.log( 274, "Error receiving from server." );
+
+                // ECHO STORED RESPONSE
+                Page.responseParse( object[Data.currentTextBlock][1], object );
+
+            }, 
+            complete: function () {
+  
+            }
+        });        
+
+    },
+
+    conversation: function ( object, instance ) {
 
         console.log("Page.conversation");
 
-        // PRINT LOCAL BLOCK
-        var newElem = "<div class='text_block'>" + textArray[Data.currentTextBlock] + "</div>";
-        $("#text_wrapper").append(newElem);
         // IF FIRST TIME : HIDE FIRST BLOCK
         if ( Data.currentTextBlock === 0 ) {
             setTimeout( function(){
                 Page.hideFirstBlock();                
             }, 500 );
         }
-        // PARSE BLOCK
-        cleanText = textArray[Data.currentTextBlock].replace(/<\/?[^>]+(>|$)/g, "");
 
-        console.log( 283, Page.parseForBot(cleanText) );
+        console.log( Data.currentTextBlock, Object.keys(object).length );
 
-        // SEND LOCAL BLOCK TO BOT
-        // DELAY OF 2 SECONDS
-        setTimeout( function(){
-            $.ajax( {
-                method: "GET",
-                dataType: "text",
-                url: "http://www.botlibre.com/rest/botlibre/form-chat?application=4581146104707647883&instance=15464920&message=" + Page.parseForBot(cleanText),
-                success: function ( data ) {
-                    
-                    console.log( 300, data );
-                    
-                    // PARSE RESULT
-                    var replyXML = $.parseXML( data ),
-                        replyText = $(replyXML).find("message").html(),
-                        replyElem = "<div class='text_block'><p>" + replyText + "</p></div>";
+        if ( Data.currentTextBlock < Object.keys(object).length ) {
 
-                    // PRINT RESPONSE
-                    $("#text_wrapper").append(replyElem);
+            // DELAY OF 2 SECONDS
+            setTimeout( function(){
+                // PRINT LOCAL BLOCK
+                Page.appendWordByWord( object[Data.currentTextBlock][0], object, false );
+            }, 0 ); // 2000
 
-                    // RUN HEIGHT CHECKER
-                    Page.heightChecker();
+        } else {
 
-                    // RUN FUNCTION AGAIN (INSTANCE++)
-                    Data.currentTextBlock++;
-                    Page.conversation( array, Data.currentTextBlock );
+            // PRINT CREDITS
 
-                }
-            });
-        }, 2000 );
+            console.log("Print credits");
+
+            var credits = "H. C. Andersen, M. Blanchot, J. B. van Helmont, E. Hemingway, B. Lee, H. Melville, H. J. Newell,T. Vesaas in conversation with Tarjei the bot.";
+            Page.appendWordByWord( credits, object, false );
+            
+        }
 
     }, 
 
@@ -333,21 +348,102 @@ var Page = {
         var wrapperH = $("#sidebar").height(),
             elemsH = $("#text_wrapper").height();
 
-        if ( elemsH > wrapperH * 0.5 ) {
+        if ( elemsH > wrapperH * 0.6 || Data.currentTextBlock === 47 ) {
+
+            console.log(331);
+
+            // IF NO MORE BLOCKS
+            var blocksLeft = $("#text_wrapper").children().length;
+            console.log( blocksLeft, " blocks left." );
+            if ( blocksLeft == 0 ) {
+                
+                // MOVE THIS TO OWN FUNCTION: 
+
+                Page.sidebarToggle();
+                $("#squiggle").fadeOut(1000);
+                return;
+            }
+
             Page.hideFirstBlock();
+            // RUN AGAIN TO CHECK
+            setTimeout( function(){
+                Page.heightChecker();
+            }, 1200 );
         }
 
 
     },
 
-    textParse: function ( data ) {
+    responseParse: function ( response, object ) {
 
-        console.log("Page.textParse");
+        console.log("Page.responseParse");
 
-        // SPLIT AT LINE BREAKS
-        textArray = data.split("\n");
-        // RETURN ARRAY
-        return textArray;
+        // SPLIT INTO ARRAY       
+        var sentences = response.split("."),
+            responseParsed = "",
+            str;
+        // LOOP THROUGH SENTENCES
+        for ( var i = 0; i < sentences.length; i++ ) {
+            // IF "THE" OR IT AT END OF SENTENCE
+            if ( sentences[i].length <= 3 ) {
+                sentences[i] = ""; 
+            }
+            // IF NOT EMPTY STRING
+            if ( sentences[i] !== "" ) {
+                str = sentences[i].trim().toLowerCase();
+                str = str[0].toUpperCase() + str.substring(1) + ". ";
+                responseParsed += str;
+            }
+        }
+
+        Page.appendWordByWord( responseParsed, object, true );
+       
+    },
+
+    appendWordByWord: function ( text, object, response ) {
+
+        console.log("Page.appendWordByWord");
+
+        // CREATE + APPEND WRAPPER WITH ID OF CURRENT TEXT BLOCK
+        var id = Data.currentTextBlock,
+            wrapper,
+            words = text.split(" "),
+            currentWord = 0;
+        if ( response ) {
+            id = Data.currentTextBlock + "_response";
+        }
+        wrapper = "<div class='text_block'><p id='" + id + "'></p></div>";
+        $("#text_wrapper").append(wrapper);
+  
+        // SETINTERVAL
+        var interval = setInterval( function(){
+            // APPEND WORD TO WRAPPER
+            $("#" + id).text( $("#" + id).text() + " " + words[currentWord] );
+            currentWord++;
+            // WHEN NO MORE WORDS
+            if ( words.length - currentWord <= 0 ) {
+                clearInterval(interval);
+                // RUN HEIGHT CHECKER
+                Page.heightChecker();
+                
+                // IF NO MORE BLOCKS
+                if ( Data.currentTextBlock >= Object.keys(object).length ) {
+                    // HIDE ALL REMAINING BLOCKS
+                    Page.heightChecker();
+                    return;
+                }
+
+                // IF LOCAL
+                if ( !response ) {
+                    // SEND LOCAL BLOCK TO BOT + WHOLE OBJECT
+                    Page.ajaxCall( object[Data.currentTextBlock][0], object );
+                } else {
+                    // RUN FUNCTION AGAIN (INSTANCE++)
+                    Data.currentTextBlock++;
+                    Page.conversation( object, Data.currentTextBlock );                     
+                }
+            }
+        }, 0 ); // 250
 
     },
 
@@ -357,10 +453,9 @@ var Page = {
 
         var firstBlock = $("#text_wrapper .text_block").eq(0),
             blockH = firstBlock.height() * 2;
-
         // TRANSLATEY ON TEXT                
         firstBlock.find("p").css({"transform":"translateY(-" + blockH + "px)"});
-        // 500 DELAY
+        // 500 + 500 DELAY
         setTimeout( function(){
             $("#text_wrapper .text_block").eq(0).slideUp(500);
             setTimeout( function(){
@@ -368,33 +463,9 @@ var Page = {
             }, 500 );
         }, 500 );
                 
-    },
-
-    textInject: function ( textArray ) {
-
-        console.log("Page.textInject", Data.currentTextBlock );
-
-        // setTimeout( function (){
-        //     if ( Data.currentTextBlock < textArray.length ) {
-        //         if ( Data.currentTextBlock > 3 ) {
-        //             Page.hideFirstBlock();
-        //         }
-        //         var newElem = "<div class='text_block'>" + textArray[Data.currentTextBlock] + "</div>";
-        //         $("#text_wrapper").append(newElem);
-        //         Page.textInject( textArray );
-        //     }
-        //     Data.currentTextBlock++;
-        // }, 3000 );
-
     }
 
 }
-
-/*****************************************************************************
-    
-	2. EVENTS
-
-*****************************************************************************/
 
 $( document ).ready(function() {
 

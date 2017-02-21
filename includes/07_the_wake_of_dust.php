@@ -36,6 +36,7 @@ canvas {
 /*	border: 1px solid pink;*/
 	position: absolute;
 	top: 45%;
+	left: 0;
 	transform: translateY(-50%);
 	z-index: 9999;
 	width: 80%;
@@ -395,17 +396,17 @@ $(document).ready(function(){
 	var bod = $('body');
 	var perfCounter = 0;
 	Events.on(engine, 'tick', function(){
-		mx = engine.input.mouse.position.x;
-		my = engine.input.mouse.position.y;
-		var pointed = false;
-		mWind = (~~((mx + dustLeft) / WIND_SPACING) * XWINDS) + (~~(my / WIND_SPACING));
-		if(mouseConstraint.constraint.bodyB){
-			bod.addClass('grabbing');
-		} else if(pointed) {
-			bod.addClass('grab');
-		} else {
-			bod.removeClass('grab grabbing');
-		}
+		// mx = engine.input.mouse.position.x;
+		// my = engine.input.mouse.position.y;
+		// var pointed = false;
+		// mWind = (~~((mx + dustLeft) / WIND_SPACING) * XWINDS) + (~~(my / WIND_SPACING));
+		// if(mouseConstraint.constraint.bodyB){
+		// 	bod.addClass('grabbing');
+		// } else if(pointed) {
+		// 	bod.addClass('grab');
+		// } else {
+		// 	bod.removeClass('grab grabbing');
+		// }
 		if(++tog === 2) tog = 0;
 		togs[tog]();			
 	});
@@ -476,7 +477,7 @@ $(document).ready(function(){
 </div>
 
 <div id="text_wrapper">
-	<a target="_blank" href="https://drive.google.com/file/d/0B0YKiorxGkwKX3FIUDh4aDUySVE/view">
+	<a target="_blank" href="http://thomashauser.fr/the-wake-of-dust">
 		<img class="link" src="<?php bloginfo('template_url'); ?>/assets/img/arrow.png" />
 		The Wake of Dust.
 	</a> 

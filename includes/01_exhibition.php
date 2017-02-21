@@ -12,19 +12,18 @@ function get_extra ( $postdata ) {
         <?php
     }
     // IF THE ELECTRONIC COTTAGE
-    if ( $postdata->post_name === "the-electronic-cottage" ) { 
-
-        ?>
+    
+    if ( $postdata->post_name === "the-electronic-cottage" ) { ?>
 
         <div class="extra">
             <?php 
-            $images = get_field("exhib_extra_images");
-            $img_1 = $images[0]["exhib_extra_image"]["url"];
+            $image = get_field("project_images");
+            $img_1 = $image[1]["project_image"]["url"];
             ?>
             <img src="<?php echo $img_1; ?>" />
         </div>
         <?php
-    }// END OF GET_EXTRA
+    } // END OF GET_EXTRA
 
 }
 ?>
@@ -47,6 +46,16 @@ function get_extra ( $postdata ) {
     width: 50%;
 }
 
+    @media ( max-width: 600px ) {
+        .exhibition_wrapper img {
+            width: 98%;
+        }
+
+        .exhibition_text {
+            width: 98%;
+        }       
+    }
+
 .extra {
     position: fixed;  
 }
@@ -63,7 +72,16 @@ function get_extra ( $postdata ) {
 #the-electronic-cottage .extra {
     right: 25%;
     top: 25%;
+    -webkit-filter: blur(5px);
+            filter: blur(5px);
+    transition: -webkit-filter 2s, filter 2s;
 }
+
+#the-electronic-cottage .extra:hover {
+    -webkit-filter: blur(0px);
+            filter: blur(0px);
+}
+
 
 #the-electronic-cottage .extra img {
     width: 100%;
@@ -72,62 +90,23 @@ function get_extra ( $postdata ) {
 
 </style>
 
-<!-- SCRIPTS -->
-
-<script>
-$(document).on( "ready", function(){
-
-    function imageSize () {
-        console.log("imageSize");
-        $("img").each( function(){
-            var wrapper = $(this).width(),
-                url = "";
-            if ( $(this).hasClass("portrait") ) {
-                wrapper = $(this).height();
-            }
-            if ( wrapper >= 1400 ) {
-                // FULL
-                url = $(this).attr("data-fll");
-            } else if ( wrapper < 1200 && wrapper >= 900 ) {
-                // EXTRA LARGE
-                url = $(this).attr("data-xlg");
-            } else if ( wrapper < 900 && wrapper >= 600 ) {
-                // LARGE
-                url = $(this).attr("data-lrg");
-            } else if ( wrapper < 600 && wrapper >= 300 ) {
-                // MEDIUM
-                url = $(this).attr("data-med");
-            } else {
-                // THUMB
-                url = $(this).attr("data-tmb");
-            }
-            // console.log(80, wrapperH, url);
-            $(this).attr("src",url);       
-        });   
-       
-    } 
-
-    $(window).on("load", function(){
-        imageSize();
-    }).resize( _.throttle(function() {
-        imageSize();
-    }, 500 ) );
-
-});    
-
-</script>
-
 <div id="<?php echo $post->post_name; ?>" class="exhibition_wrapper wrapper">
     
 	<!-- IMAGES -->
+    <?php if ( $post->post_name === "the-electronic-cottage" ) {
+        $image = get_field("project_images");
+        $img = $image[0]["project_image"];
+        image_object( $img );
+        ?>
     <?php 
-	if( have_rows("project_images") ):
-    	while ( have_rows("project_images") ) : the_row();
-        	$image = get_sub_field("project_image");
-        	image_object( $image );
-    	endwhile;
-    endif;
-	?>
+    } else {
+    	if( have_rows("project_images") ):
+        	while ( have_rows("project_images") ) : the_row();
+            	$image = get_sub_field("project_image");
+            	image_object( $image );
+        	endwhile;
+        endif;
+	} ?>
 
     <!-- TEXT -->
     <div class="exhibition_text">

@@ -70,7 +70,7 @@ function get_images ( $side ) {
 
 <style>
 body {
-    background-color: black;
+/*    background-color: black;*/
 }            
 #bg_image {
     width: 100%;
@@ -236,11 +236,11 @@ body {
                 "-webkit-filter" : "blur(0px)", 
                         "filter" : "blur(0px)"
             });
-            $("#bg_image").addClass("visible").css({
-                "-webkit-filter" : "blur(0px)", 
-                        "filter" : "blur(0px)"
-            });
-            bgImageSize();
+            // $("#bg_image").addClass("visible").css({
+            //     "-webkit-filter" : "blur(0px)", 
+            //             "filter" : "blur(0px)"
+            // });
+            // bgImageSize();
         }
         // SLIDESHOW
         function imageChange ( wrapper ) {
@@ -280,16 +280,16 @@ body {
             imagesInit();
             slideInit();
         }).on( "resize", _.throttle(function() {
-            bgImageSize();
+            // bgImageSize();
         }, 500 ) );
     }); // END OF DOCUMENT READY
 </script>
 
 <!-- BACKGROUND IMAGE -->
 <?php 
-    $images = get_field("project_images");
-    $bg_image = $images[0]["project_image"];
-    bgImage( $bg_image, true ); 
+    // $images = get_field("project_images");
+    // $bg_image = $images[0]["project_image"];
+    // bgImage( $bg_image, true ); 
 ?>
 
 <!-- TEXT -->

@@ -8,7 +8,6 @@
 </script>
 
 <?php
-
 // EXHIBITION
 if ( has_tag("exhibition") ) {
 	include("includes/01_exhibition.php");
@@ -26,7 +25,7 @@ else if ( $post->post_name == "all-that-is-solid" ) {
 	include("includes/04_all_that_is_solid.php");
 }
 // SUBLIMATIONS
-else if ( $post->post_name == "sublimations" ) {
+else if ( $post->post_name == "_sublimations" ) {
 	include("includes/06_sublimations.php");
 }
 // THE WAKE OF DUST

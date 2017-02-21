@@ -13,12 +13,13 @@ html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockq
 ************************************************/
 
 @font-face {
-    font-family:'Johnson';
-    src:url('assets/fonts/johnson-webfont.eot');
-    src:url('assets/fonts/johnson-webfont.eot?#iefix') format('embedded-opentype'),          
-        url('assets/fonts/johnson-webfont.woff2') format('woff2'),   
-        url('assets/fonts/johnson-webfont.woff') format('woff'),
-        url('assets/fonts/johnson-webfont.svg#johnsonregular') format('svg');
+    font-family:'SangbleuKing';
+    src:url('assets/fonts/SangBleuKing-WebTrial.eot');
+    src:url('assets/fonts/SangBleuKing-WebTrial.eot?#iefix') format('embedded-opentype'),          
+        url('assets/fonts/SangBleuKing-WebTrial.woff2') format('woff2'),   
+        url('assets/fonts/SangBleuKing-WebTrial.woff') format('woff'),
+        url('assets/fonts/SangBleuKing-WebTrial.ttf') format('truetype'),
+        url('assets/fonts/SangBleuKing-WebTrial.svg#johnsonregular') format('svg');
     font-weight:normal;
     font-style:normal;
 }
@@ -40,8 +41,7 @@ html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockq
 ************************************************/
 
 html, body {
-/*    background-color: beige;*/
-/*    font-family: Helvetica, Arial, sans-serif;*/
+    font-family: cmr, serif, Helvetica, Arial, sans-serif;
     font-size: 1.05em;
     line-height: 1.8;
 }
@@ -70,12 +70,32 @@ b, strong {
     font-weight: 700;
 }
 
+hr {
+    border: 0;
+    background: black;
+    height: 1px;
+    width: 99%;
+    margin-left: 0;
+}
+
 #wrapper {
 /*    border: 2px solid purple;*/
 }
 
+#left_wrapper, #right_wrapper {
+/*    border: 1px solid red;*/
+    width: 45%;
+    margin-right: 5%;
+    display: inline-block;
+    vertical-align: top;
+}
+
+#right_wrapper {
+    margin-right: 0%;
+}
+
 .wrapper {
-    margin: 24px;
+    margin: 24px 32px;
     padding-bottom: 400px;
     padding-bottom: 25vh;
 }
@@ -84,6 +104,7 @@ b, strong {
     width: 120px;
     height: 120px;  
     position: absolute;
+    z-index: 99;
     top: 50px;
     right: 50px;  
     cursor: pointer;
@@ -108,8 +129,20 @@ b, strong {
 #close_button img {
     width: 100%;
     height: 100%;
+    position: absolute;
     -webkit-filter: drop-shadow( 2px 2px 2px #000 );
-            filter: drop-shadow( 2px 2px 2px #000 );    
+            filter: drop-shadow( 2px 2px 2px #000 ); 
+    opacity: 0;
+    transition: opacity 1s;   
+}
+
+#close_button img.selected {
+    opacity: 1;    
+}
+
+#close_button img.inverted {
+    -webkit-filter: drop-shadow( 2px 2px 2px #fff );
+            filter: drop-shadow( 2px 2px 2px #fff );     
 }
 
 #hyperlink {
@@ -117,16 +150,19 @@ b, strong {
     background-color: rgba(255,255,255,0);
     border-radius: 100px;
     border: 0px;
-    width: 160px;
-    height: 160px;
+    width: 12vw;
+    height: 12vw;
     position: fixed;
     z-index: 9999;
     top: -200px;
     left: -200px;
-/*    box-shadow: 5px 5px 20px #8B4513;*/
     box-shadow: 5px 5px 20px black;
-    transition: all 3s;
+    transition: top 5s linear, left 3s ease-in-out;
     cursor: pointer;
+}
+
+#hyperlink.inverted {
+    box-shadow: 5px 5px 20px white;    
 }
 
 #hyperlink.top_left {
@@ -171,15 +207,16 @@ b, strong {
 #text_wrapper {
 /*    border: 1px solid red;*/
     width: 80%;
-    left: 10%;
+/*    left: 10%;*/
     position: absolute;
+    position: relative;
     top: 24px;
 }
 
 .text_block {
 /*    border: 1px solid green;*/
     position: relative;
-    color: white;
+/*    color: white;*/
     font-family: "cmr", serif;
     line-height: 1.6;
     font-size: 0.95em;
@@ -189,7 +226,8 @@ b, strong {
 
 .text_block p {
 /*    border: 1px solid blue;*/
-    transition: transform 0.5s;
+    opacity: 1;
+    transition: all 0.5s;
 }
 
 .loading:after {
@@ -219,12 +257,20 @@ b, strong {
 ************************************************/
 
 #home_wrapper {
-    padding-bottom: 0px;
-    padding-bottom: 0vh;
+/*    padding-bottom: 0px;
+    padding-bottom: 0vh;*/
+    padding-bottom: 64px;
+    transition: opacity 1s;  
 }
+
+#home_wrapper > div, hr {
+    margin-bottom: 36px;
+}
+
 
 .layer {
 /*    border: 2px solid purple;*/
+    background-color: white;
     position: fixed;
     top: 0;
     width: 100%;

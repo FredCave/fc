@@ -29,6 +29,10 @@ function enqueue_cpr_scripts() {
 }
 add_action('wp_enqueue_scripts', 'enqueue_cpr_scripts');
 
+// STOP EMOJIS LOADING
+remove_action( 'wp_head', 'print_emoji_detection_script', 7 );
+remove_action( 'wp_print_styles', 'print_emoji_styles' );
+
 // ADD CUSTOM POST TYPES
 add_action( 'init', 'create_post_types' );
 function create_post_types() {

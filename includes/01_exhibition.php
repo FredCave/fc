@@ -32,6 +32,11 @@ function get_extra ( $postdata ) {
 
 <style>
 
+/* OVERFLOW IMPORTANT FOR SCROLLING ONCE IN IFRAME */
+html, body {
+    overflow-y: auto; 
+}
+
 .exhibition_wrapper img {
     width: 50%;
     height: auto;
@@ -92,6 +97,11 @@ function get_extra ( $postdata ) {
 
 <div id="<?php echo $post->post_name; ?>" class="exhibition_wrapper wrapper">
     
+    <script>
+
+
+    </script>
+
 	<!-- IMAGES -->
     <?php if ( $post->post_name === "the-electronic-cottage" ) {
         $image = get_field("project_images");

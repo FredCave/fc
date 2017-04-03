@@ -9,34 +9,35 @@
                 while ( $info_query->have_posts() ) : $info_query->the_post(); ?>
 
                     <!-- MAIN TEXT -->
-                    <div class="info_main">
+                    <div class="info_main info visible">
                         <?php the_field("info_intro"); ?>
                     </div>
 
-                    <div id="text_wrapper"></div>
+                    <?php /* 
+                    <!-- PROJECTS -->
+                    <div class="info_projects info">
+                        <!-- <span class="plus"><a href="">+</a></span> -->
+                        <div class=""><?php the_field("info_projects"); ?></div>
+                    </div>
 
-                    <?php /*
+                    <!-- EDUCATION -->
+                    <div class="info_education info visible">
+                        <!-- <span class="plus"><a href="">+</a></span> -->
+                        <div class=""><?php the_field("info_education"); ?></div>
+                    </div>
+      
+                    <?php /* 
+                    <!-- LOADS TRANSMISSIONS -->
+                    <div class="info">
+                        <span class="plus transmission"><a href="">+</a></span>
+                    </div>
+
                     <hr>
-
                     <!-- PROJECT INDEX -->
                     <div class="project_index">
                         <a href='<?php bloginfo("url") ?>/projects/'>Index of Project Pages</a>
                     </div> 
-
-                    <hr>
-
-                    <!-- PROJECTS -->
-                    <div class="info_projects">
-                        <?php the_field("info_projects"); ?>
-                    </div> 
-
-                    <hr>
-
-                    <!-- EDUCATION -->
-                    <div class="info_education">
-                        <?php the_field("info_education"); ?>
-                    </div>
-                     */ ?>
+                    */ ?>
 
                 <?php
                 endwhile;
@@ -46,6 +47,9 @@
         </div>
 
         <div id="right_wrapper">
+
+            <div id="text_wrapper"></div>
+
             <?php /* $project_query = new WP_Query("post_type=projects");
             if ( $project_query->have_posts() ) :
                 while ( $project_query->have_posts() ) : $project_query->the_post(); ?>
@@ -57,21 +61,26 @@
 
     </div>
 
-    <div id="layer_one" class="layer">
-        <iframe></iframe>
+    <div id="layer_wrapper" class="">
     </div>
 
-    <div id="layer_two" class="layer">
-        <iframe></iframe>
-    </div>   
-
     <div id="hyperlink">
+        <a href=""></a>
     </div>
 
     <div id="close_button">
-        <img src="<?php bloginfo( 'template_url' ); ?>/img/close.svg" class="close_button_black selected" />
-        <img src="<?php bloginfo( 'template_url' ); ?>/img/close_white.svg" class="close_button_white" />
+        <a href="#">
+            <img src="<?php bloginfo( 'template_url' ); ?>/img/close.svg" class="close_button_black selected" />
+            <img src="<?php bloginfo( 'template_url' ); ?>/img/close_white.svg" class="close_button_white" />
+        </a>
     </div>  
+
+        <!-- TMP CAPTION -->
+    <div id="caption_wrapper">
+        <p class="title">The Electronic Cottage</p>
+        <p class="description">Exhibition</p>
+        <p class="year">2015</p>
+    </div>
 
     <?php /*
     <div id="sidebar">

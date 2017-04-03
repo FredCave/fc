@@ -1,7 +1,6 @@
 <!-- STYLES -->
 
 <style>
-
 body {
 	background-color: black;
 	overflow: hidden;
@@ -413,11 +412,14 @@ $(document).ready(function(){
 	engine.render.options.background = 'transparent';
 	Engine.run(engine);	
 
-	function imageSize () {
-		console.log("imageSize");
+	function wakeImageLoad () {
+
+		console.log("wakeImageLoad");
+
 		// GET WRAPPER WIDTH
 		var wrapperW = $("#image_wrapper").width(),
 			vis = $("#image_wrapper").find(".visible");
+
 		if ( wrapperW >= 1400 ) {
             // FULL
             url = vis.attr("data-fll");
@@ -437,25 +439,29 @@ $(document).ready(function(){
         document.getElementById("image_wrapper").style.backgroundImage = "url('" + url + "')";
 	}
 	
-	function imagesInit () {
-		console.log("imagesInit");
+	function wakeImagesInit () {
+
+		console.log("wakeImagesInit");
+
 		$("#image_wrapper img:first").addClass("visible");
-		imageSize();
-		setInterval( imgSlide, 7000);
+		// wakeImageSize();
+		setInterval( wakeImageSlide, 7000);
 	}
 
-	function imgSlide () {
+	function wakeImageSlide () {
+		
+		console.log("wakeImageSlide");
+
 		if ( !$(".visible").next().length ) {
 			$("#image_wrapper img:first").addClass("visible");
-			imageSize();
 		} else {
 			$(".visible").removeClass("visible").next().addClass("visible");
-			imageSize();
-		}	
+		}
+		wakeImageLoad();	
 	}
 	
 	$(window).on("load", function(){
-		imagesInit();
+		wakeImagesInit();
 	}).resize( _.throttle(function() {
 		imageSize();
     }, 500 ) );

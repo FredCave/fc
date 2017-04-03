@@ -4,6 +4,7 @@
 html, body, #wrapper {
     height: 100%;
     background-color: black;
+/*    overflow-y: auto;*/
 }
 iframe {
     width: 100%;
@@ -41,7 +42,7 @@ iframe {
     font-family: helvetica;
     font-size: 1.3em;
     width: 100%;
-    top: 45%;
+    top: 48%;
     letter-spacing: 0.05em;
     transform: translateY(-50%);
 }
@@ -63,7 +64,103 @@ iframe {
 <script>
 $(document).on("ready", function(){
 
-var SubtleText = {
+    var subs = [
+        "sub-acute", "sub-aerial", "sub-agency", "sub-aqueous", "sub-atomic", "sub-carrier", "sub-contact", "sub-cortical", "sub-critical", "sub-glacial", "sub-harmonics", "sub-lethal", "sub-littoral", "sub-marginal", "sub-orbital", "sub-parallel", "sub-primal", "sub-sonic", "sub-specific", "sub-stellar" 
+    ];
+
+    var Page = {
+
+        init: function (){
+
+            this.videoResize();
+
+            this.textScroller();
+
+            SubtleText.init( $("#subtle_text_wrapper"), 9000, 6000, 150 );
+
+        },
+
+        // IFRAME RESIZE
+        videoResize: function () {
+            
+            // console.log("videoResize");
+
+            var winW = $(window).width(); 
+            var winH = $(window).height();
+            var winR = winH / winW;
+            var video = $("#wrapper iframe");
+
+            // RATIO OF ORIGINAL VIDEO
+            var vidR = parseInt( video.attr("height") ) / parseInt( video.attr("width") );
+            // RATIO OF IFRAME
+            var ifrR = video.height() / video.width();
+            // IFRR NEEDS TO BE 0.65
+            // console.log( 97, vidR, ifrR );
+
+            if ( winR > vidR ) {
+                // DIFF BETWEEN CURRENT VIDEO HEIGHT AND WINH
+                var diff = winH / (winW * vidR),
+                    newW = winW * diff,
+                    newH = winW * diff * 0.65;
+
+                video.css({
+                    "width": newW,
+                    "margin-left": 0 - (newW - winW) / 2,
+                    "margin-top": 0 - (newH - winH) / 2,
+                    "height": newH
+                });
+
+            } else {    
+
+                video.css({
+                    "width": winW,
+                    "margin-left": "",
+                    "margin-top": 0 - ( (winW * 0.65) - winH ) / 2,
+                    "height": winW * 0.65
+                });  
+
+            }
+        },
+
+        textScroller: function ( index ) {
+
+            // console.log("textScroller");
+            
+            if ( typeof index === "undefined" ) {
+                index = 0;
+            }
+            // console.log( subs[index], index, subs.length );
+            // CREATE DOM ELEMENT
+            var p = $("<p>" + subs[index] + "</p>"),
+                randTop = Math.random() * 50 + 10; // BETWEEN 10 + 60
+            // ANIMATE 
+            p.appendTo( "#scroller_wrapper" );
+            $("#scroller_wrapper p").css({
+                "top" : randTop + "%",
+                 "left" : "150vh"           
+            });
+            setTimeout( function(){
+                $("#scroller_wrapper p").css({
+                    "left" : "-100vh"           
+                }); 
+            }, 10 );
+            setTimeout( function(){
+                // REMOVE
+                p.remove();
+                // IF NEXT:
+                if ( index < subs.length - 1 ) {
+                    index++;
+                } else {
+                    index = 0;
+                }
+                Page.textScroller(index); 
+            }, 16000 );
+
+        }
+
+    }
+
+    var SubtleText = {
 
         _textBlocks: "",
 
@@ -77,7 +174,7 @@ var SubtleText = {
 
         init: function ( textBlocks, wordDelay, wordPause, letterSpeed ) {
 
-            console.log("SubtleText.init", textBlocks, wordDelay, wordPause, letterSpeed);
+            // console.log("SubtleText.init", textBlocks, wordDelay, wordPause, letterSpeed);
 
             this._textBlocks = textBlocks;
             this._wordDelay = wordDelay;
@@ -90,7 +187,7 @@ var SubtleText = {
 
         mainLoop: function () {
 
-            console.log("SubtleText.mainLoop");
+            // console.log("SubtleText.mainLoop");
 
             var block = SubtleText._textBlocks.find("li").eq( this._current );
 
@@ -111,13 +208,13 @@ var SubtleText = {
 
         fadeIn: function ( block ) {
 
-            console.log("SubtleText.fadeIn");
+            // console.log("SubtleText.fadeIn");
 
             var letters = block.children("span").length,
                 index = 0,
                 currentLetter;
 
-            console.log( 80, letters );
+            // console.log( 80, letters );
 
             // LOOP THROUGH LETTERS
             var interval = setInterval( function(){
@@ -133,7 +230,7 @@ var SubtleText = {
 
                 } else {
                     
-                    console.log("Clear interval.");
+                    // console.log("Clear interval.");
                     clearInterval(interval);
                     // DELAY AND THEN
                     setTimeout( function(){
@@ -148,7 +245,7 @@ var SubtleText = {
 
         fadeOut: function ( block, letters ) {
 
-            console.log("SubtleText.fadeOut");
+            // console.log("SubtleText.fadeOut");
 
             var index = 0;
 
@@ -167,7 +264,7 @@ var SubtleText = {
 
                 } else {
                     
-                    console.log("Clear interval.");
+                    // console.log("Clear interval.");
                     clearInterval(interval);
                     block.hide();
                     // WHEN FINISHED RUN MAIN LOOP AGAIN
@@ -178,99 +275,17 @@ var SubtleText = {
                 
             }, SubtleText._letterSpeed );           
 
-        },
-
-    }
-
-    var subs = [
-        "sub-cortical", "sub-critical", "sub-lethal", "sub-orbital" 
-    ];
-
-    SubtleText.init( $("#subtle_text_wrapper"), 9000, 6000, 150 );
-
-    function textScroller ( index ) {
-        console.log("textScroller");
-        
-        if ( typeof index === "undefined" ) {
-            index = 0;
         }
-        console.log( subs[index], index, subs.length );
-        // CREATE DOM ELEMENT
-        var p = $("<p>" + subs[index] + "</p>"),
-            randTop = Math.random() * 50 + 10; // BETWEEN 10 + 60
-        // ANIMATE 
-        p.appendTo( "#scroller_wrapper" );
-        $("#scroller_wrapper p").css({
-            "top" : randTop + "%",
-             "left" : "150vh"           
-        });
-        setTimeout( function(){
-            $("#scroller_wrapper p").css({
-                "left" : "-100vh"           
-            }); 
-        }, 10 );
-        setTimeout( function(){
-            // REMOVE
-            p.remove();
-            // IF NEXT:
-            if ( index < subs.length - 1 ) {
-                index++;
-            } else {
-                index = 0;
-            }
-            textScroller(index); 
-        }, 16000 );
 
     }
 
-    textScroller();
-
-        // IFRAME RESIZE
-    // function videoWrapper() {
-    //     var winW = $(window).width(); 
-    //     var winH = $(window).height();
-    //     var winR = winH / winW;
-    //     var video = $("#video_wrapper iframe");
-    //     // console.log( winW, winH, winR );
-
-    //     // ratio of original video
-    //     var vidR = video.attr("height") / video.attr("width");
-    //     // ratio of iframe
-    //     var ifrR = video.height() / video.width();
-    //     // ifrR nedds to be 0.65
-
-    //     //var diff = winW / (winH / vidR);
-    //     if ( winR > vidR ) {
-    //         // diff between current video height and winH
-    //         var diff = winH / (winW * vidR);
-
-    //         var newW = winW * diff;
-    //         var newH = winW * diff * 0.65;
-
-    //         video.css({
-    //             "width": newW,
-    //             "margin-left": 0 - (newW - winW) / 2,
-    //             "margin-top": 0 - (newH - winH) / 2,
-    //             "height": newH
-    //         });
-    //     } else {            
-    //         video.css({
-    //             "width": winW,
-    //             "margin-left": "",
-    //             "margin-top": 0 - ( (winW * 0.65) - winH ) / 2,
-    //             "height": winW * 0.65
-    //         });         
-    //     }
-    // }
-
-    // videoWrapper();
-
+    Page.init();
 
 });
 </script>
 
 
-<iframe sandbox="allow-same-origin allow-scripts allow-popups" src="https://player.vimeo.com/video/193055435?autoplay=true&loop=true" loop width="1280" height="720" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+<iframe sandbox="allow-same-origin allow-scripts allow-popups" src="https://player.vimeo.com/video/205358566?autoplay=true&loop=true" loop width="1280" height="720" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 
 <ul id="subtle_text_wrapper">
     <li>sub-cortical</li> 

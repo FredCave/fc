@@ -1,7 +1,11 @@
 <!-- STYLES -->
 
 <style>
-
+/* OVERFLOW IMPORTANT FOR SCROLLING ONCE IN IFRAME */
+html, body {
+    overflow-y: auto;
+    height: auto; 
+}
 #page {
 /*	border: 1px solid red;*/
 	width: 100%;
@@ -88,7 +92,7 @@
 		});
 
 		function bgImageSize () {
-            console.log("bgImageSize");
+            // console.log("bgImageSize");
             var elem = $("#page img"),
                 wrapperW = $(document).height(),
                 url = "";
@@ -108,7 +112,7 @@
                 // THUMB
                 url = elem.attr("data-tmb");
             }
-            console.log(80, wrapperW, url);
+            // console.log(80, wrapperW, url);
             elem.attr("src",url);
         } 
 

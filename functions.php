@@ -19,8 +19,8 @@ add_filter('the_generator', 'wpversion_remove_version');
 function enqueue_cpr_scripts() {
   
     wp_deregister_script( 'jquery' );
-    wp_register_script( 'jquery', 'https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js');
-    // wp_register_script( 'jquery', get_template_directory_uri() . '/js/_jquery.js');
+    // wp_register_script( 'jquery', 'https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js');
+    wp_register_script( 'jquery', get_template_directory_uri() . '/js/_jquery.js');
     wp_enqueue_script( 'jquery' );  
     
     if ( is_home() ) {
@@ -120,5 +120,87 @@ function image_object( $image ) {
             src=' " . $thumb . "' />";
     endif;
 }
+
+// CUSTOM END POINT
+
+function fc_get_project ( $request_data ) {
+
+    $parameters = $request_data->get_params();
+
+    $projects_query = new WP_Query( array( 
+        'name' => $parameters["name"],
+        'post_type' => 'projects' 
+    ) );
+
+    $data = array();
+    // LOOP 
+    if ( $projects_query->have_posts() ) :
+        while ( $projects_query->have_posts() ) : $projects_query->the_post();    
+            $data[] = array(
+                'title'             => get_the_title(),
+                'slug'              => basename(get_permalink()),
+                'description'       => get_field("project_description"),
+                'year'              => get_field("project_year"),
+                'url'               => get_permalink()
+            );
+        endwhile;
+        wp_reset_postdata();
+    endif;
+    // RETURN DATA
+    if ( empty( $data ) ) {
+        return null;
+    }   
+    return $data;
+
+}
+
+function fc_get_projects ( ) {
+
+    $projects_query = new WP_Query( array( 
+        'post_type'         => 'projects',
+        'orderby'           => 'rand',
+        'posts_per_page'    => 99
+    ) );
+
+    $data = array();
+    // LOOP 
+    if ( $projects_query->have_posts() ) :
+        while ( $projects_query->have_posts() ) : $projects_query->the_post();    
+            // FILTER OUT MULTIPLE NIGHT LIGHT POSTS
+            if ( basename(get_permalink()) !== "night-light-2" && basename(get_permalink()) !== "night-light-3" ) {
+                $data[] = array(
+                    'title'             => get_the_title(),
+                    'slug'              => basename(get_permalink()),
+                    'description'       => get_field("project_description"),
+                    'year'              => get_field("project_year"),
+                    'url'               => get_permalink()
+                ); 
+            }
+        endwhile;
+        wp_reset_postdata();
+    endif;
+    // RETURN DATA
+    if ( empty( $data ) ) {
+        return null;
+    }   
+    return $data;
+
+}
+
+// REGISTER END POINTS
+
+add_action( 'rest_api_init', function () {
+
+    register_rest_route( 'custom/v1', '/project/', array(
+        'methods' => 'GET',
+        'callback' => 'fc_get_project',
+    ) );
+    register_rest_route( 'custom/v1', '/projects/', array(
+        'methods' => 'GET',
+        'callback' => 'fc_get_projects',
+    ) );
+
+
+} );
 
 ?>

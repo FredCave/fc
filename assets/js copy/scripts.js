@@ -25,11 +25,7 @@ var Data = {
 
     hyperLinkActive: false,
 
-    sidebarText: false,
-
-    currentTextBlock: 0,
-
-    nextLayerPrimed: false
+    currentTextBlock: 0
 
 }
 
@@ -47,10 +43,7 @@ var Page = {
 
         this.srcInit();
 
-        // PLACES HYPERLINK AFTER IFRAME HAS LOADED
-        this.nextLayerInit();
-
-        Transmissions.init();
+        // Transmissions.init();
 
     },
 
@@ -59,34 +52,18 @@ var Page = {
         console.log("Page.bindEvents");
 
         $("#hyperlink").on("mouseover", function(){
-            if ( Page.hyperLinkActive ) {
-                Page.nextFadeIn();                
+            if ( Data.hyperLinkActive ) {
+                Page.nextFadeIn();
             }
         }).on("mouseout", function(){
-            // IF NEXT LAYER PRIMED
-            if ( Data.nextLayerPrimed ) {
-                console.log(65);
-                // ALLOW TIME FOR OUTGOING LAYER TO FADE OUT
-                setTimeout( function (){
-                    Page.nextLayerInit();           
-                }, 1000 );
-                Data.nextLayerPrimed = false; 
-            } else {
-                Page.nextFadeOut();                
+            if ( Data.hyperLinkActive ) {
+                Page.nextFadeOut();
             }
         }).on("click", function(){
-            if ( Page.hyperLinkActive ) {
+            if ( Data.hyperLinkActive ) {
                 Page.hyperLinkClick();
             }
         });
-
-        // $("#close_button").on("mouseover", function(){
-        //     console.log("Close hover.");
-        //     Page.nextFadeIn(true);
-        // }).on("mouseout", function(){
-        //     console.log("Close hover off.");
-        //     Page.nextFadeOut(true);                
-        // });
 
         $("#close_button").on("click", function(){
             Page.infoReset();
@@ -94,7 +71,12 @@ var Page = {
 
         $("#squiggle").on("click", function(){
             Sidebar.sidebarToggle();
-        });      
+        });  
+
+        $(".plus a").on("click", function(e){
+            e.preventDefault();
+            Page.showMore( $(this) );
+        });    
 
     },
 
@@ -111,6 +93,12 @@ var Page = {
             sources[j] = temp;
         }
 
+        // LOAD FIRST SRC
+        var nextSrc = sources[ Data.nextSrc ];
+        $(".layer").eq( Data.nextLayer - 1 ).find("iframe").attr("src", nextSrc);
+        // PLACE + ACTIVATE HYPERLINK
+        this.placeHyperLink();
+
     },
 
     infoReset: function () {
@@ -118,13 +106,41 @@ var Page = {
         console.log("Page.infoReset");
 
         $("#home_wrapper").fadeIn(1000);
-
         $("#close_button").fadeOut(1000);
         $(".layer").css({
             "opacity" : 0,
             "pointer-events" : "none"
         });
         $("#hyperlink").removeClass("inverted");
+
+    },
+
+    showMore: function ( click ) {
+
+        console.log("Page.showMore");
+
+        var plus = click.parent(".plus");
+        // FADE OUT PLUS
+        // plus.css("opacity", 0);
+        // setTimeout( function(){
+        //     plus.remove();
+        // }, 1000 );
+
+        plus.hide();
+        // CHECK IF LAST PLUS
+        if ( plus.hasClass("transmission") ) {
+            Transmissions.init();
+            return;
+        } 
+        // FADE IN TEXT
+        plus.next(".hidden").css({
+            "opacity" : 1,
+            "pointer-events" : "auto"
+        });
+        // SHOW FOLLOWING PLUS
+        if ( plus.parent(".info").next(".info").length ) {
+            plus.parent(".info").next(".info").fadeIn();
+        }
 
     },
 
@@ -143,28 +159,24 @@ var Page = {
             Data.nextSrc++;
         }
 
-        console.log( 50, nextSrc, Data.nextSrc );
-
         // LOAD NEXT SRC IN IFRAME
         var getNextLayer = Data.nextLayer,
             targetLayer = $(".layer").eq(getNextLayer-1),
             targetFrame = targetLayer.find("iframe");
 
-        console.log( 129, targetLayer.css("opacity") );
-
-        // targetLayer.css({
-        //     "z-index" : 99
-        // });
+        targetLayer.css({
+            "z-index" : 99,
+            "opacity" : 0
+        }).hide(); // HIDE TEMPORARILY WHILE LOADING
         targetFrame.attr("src",nextSrc);
 
         // ON LOAD: PLACE HYPERLINK
         targetFrame.on( "load", function(){
             
-            console.log( 120, "iframe loaded" );
-            
             // ACTIVATE HYPERLINK
-            Page.hyperLinkActive = true;
-            Page.placeHyperLink();
+            Data.hyperLinkActive = true;
+            targetLayer.show();
+
         });
 
     },
@@ -177,14 +189,12 @@ var Page = {
             case "http://localhost:8888/fredcave/projects/the-wake-of-dust/": 
             case "http://localhost:8888/fredcave/projects/_sublimations/": 
                 // INVERT HYPERLINK + CLOSE BUTTON
-                console.log("Invert hyperlink.");
                 $("#hyperlink").addClass("inverted");
                 $("#close_button .close_button_black").removeClass("selected");
                 $("#close_button .close_button_white").addClass("selected");
                 break;
             default:
                 // NORMAL HYPERLINK
-                console.log("Normal hyperlink.");
                 $("#hyperlink").removeClass("inverted");
                 $("#close_button .close_button_white").removeClass("selected");
                 $("#close_button .close_button_black").addClass("selected");
@@ -221,100 +231,55 @@ var Page = {
         }
         if ( !Data.hyperLinkVisible ) {
             $("#hyperlink").addClass(initialClass);
-            delay = 500;
+            // TRANSLATE BOTTOM + RIGHT VALUES TO TOP + LEFT
+            var initialTop = $("#hyperlink").offset().top,
+                initialLeft = $("#hyperlink").offset().left;
+            $("#hyperlink").css({
+                "bottom" : "inherit",
+                "right" : "inherit",
+                "top" : initialTop,
+                "left" : initialLeft
+            });    
+            delay = 1000;
             Data.hyperLinkVisible = true;
         }
         setTimeout( function(){
-            $("#hyperlink").css(cssValues);            
+            $("#hyperlink").css(cssValues); 
+            // ACTIVATE HYPERLINK
+            Data.hyperLinkActive = true;           
         }, delay );
 
     },  
 
-    // placeHyperLinkFirstTime: function () {
+    nextFadeIn: function () {
 
-    //     console.log("Page.placeHyperLinkFirstTime");
+        console.log("Page.nextFadeIn");
 
-    //     var delay = Math.random() * 2 + 1000, // INITIAL DELAY OF BETWEEN 1 & 3 SEC
-    //         corners = [
-    //             ["top_left","top","left"],
-    //             // ["top_right","top","right"],
-    //             ["bottom_right","bottom","right"],
-    //             ["bottom_left","bottom","left"]
-    //         ],
-    //         pick = Math.ceil( Math.random() * 4 ) - 1, // MINUS 1 BECAUSE ZERO-INDEXED ARRAY
-    //         gutter_1,
-    //         gutter_2,
-    //         rand = Math.floor( Math.random() ) + 1,
-    //         other = 3 - rand,
-    //         value = "50px",
-    //         randValue = Math.random() * $(window).height() * 0.8;
+        var targetFrame = $(".layer").eq( Data.nextLayer - 1 ); 
 
-    //     $("#hyperlink").addClass( corners[pick][0] );
-        // EX: IF TOP_LEFT COULD BE TOP OR LEFT GUTTERS
-        // switch ( pick ) {
-        //     case 0 :
-        //         gutter_1 = corners[pick][rand];
-        //         gutter_2 = corners[pick][other];
-        //         break;
-        //     case 1 :
-        //         gutter_1 = corners[pick][rand];
-        //         gutter_2 = corners[pick][other];
-        //         break;
-        //     case 2 :
-        //         gutter_1 = corners[pick][rand];
-        //         gutter_2 = corners[pick][other];
-        //         break;
-        //     case 3 :
-        //         gutter_1 = corners[pick][rand];
-        //         gutter_2 = corners[pick][other];
-        //         break;
-        // }
-    //     gutter_1 = corners[pick][rand];
-    //     gutter_2 = corners[pick][other];
-
-    //     console.log( gutter_1, gutter_2 );
-
-    //     setTimeout( function(){
-    //         $("#hyperlink").css(gutter_1,value);  
-    //         $("#hyperlink").css(gutter_2,randValue);            
-    //     }, delay );
-
-    // },
-
-    nextFadeIn: function ( info ) {
-
-        console.log("Page.nextFadeIn",info);
-
-        var targetFrame;
-        if ( !info ) {
-            console.log("Not info.");
-            targetFrame = $(".layer").eq( Data.nextLayer - 1 ); 
-        } 
-        // else {
-        //     targetFrame = $("#home_wrapper");
-        //     console.log("Info.", targetFrame);
-        // }
-        targetFrame.css({
-            "opacity" : 0.6,
-            "z-index" : 99
-        });  
+        targetFrame.stop();
+        targetFrame.animate({
+            opacity: 0.6
+        }, 2000 );
+        $("#caption_wrapper").animate({
+            opacity: 0.6
+        }, 2000 );
 
     },
 
     nextFadeOut: function ( info ) {
 
-        console.log("Page.nextFadeOut");
+        console.log("Page.nextFadeOut", Data.nextLayer);
 
-        var targetFrame;
-        if ( !info ) {
-            targetFrame = $(".layer").eq( Data.nextLayer - 1 ); 
-        } else {
-            targetFrame = $("#home_wrapper");
-        }
-        targetFrame.css({
-            "opacity" : "",
-            "z-index" : ""
-        });   
+        var targetFrame = $(".layer").eq( Data.nextLayer - 1 ); 
+
+        targetFrame.stop();
+        targetFrame.animate({
+            opacity: 0
+        }, 2000 );
+        $("#caption_wrapper").animate({
+            opacity: 0
+        }, 2000 );
 
     },
 
@@ -333,12 +298,24 @@ var Page = {
 
         console.log("Page.hyperLinkClick");
 
-        // DEACTIVATE HYPERLINK
-        Page.hyperLinkActive = false;
-        // MOVE HYPERLINK
+        // HYPERLINK FUNCTIONS
+            // DEACTIVATE + MOVE
+        Data.hyperLinkActive = false;
         this.placeHyperLink();
-        // LOAD NEXT SRC
-        // this.nextLayerInit();
+
+        // LAYER FUNCTIONS
+        this.layerLoad();
+        // FADE OUT LAYER THEN LOAD NEXT SRC
+        var outLayer = $(".layer").eq( Data.nextLayer - 1 ).siblings(".layer");
+        outLayer.animate({
+            opacity : 0 
+        }, 2000, function (){
+            Data.nextSrc++;
+            Data.nextLayer = Data.nextLayer === 1 ? 2 : 1;
+            setTimeout( function(){
+                Page.nextLayerInit();            
+            }, 500 );            
+        });
 
     },
 
@@ -352,24 +329,19 @@ var Page = {
         // FADE OUT INFO + SIBLING
         $("#home_wrapper").fadeOut();
 
-        targetLayer.css({
-            "opacity": 1,
-            "pointer-events" : "auto",
-            "z-index" : 9
-        }).siblings(".layer").css({
-            "pointer-events" : "",
-            "opacity" : 0          
-        });  
-        targetLayer.css({"overflow":"auto"});
-        // TOGGLE NEXT LAYER
-        Data.nextLayer = Data.nextLayer === 1 ? 2 : 1;
+        targetLayer.animate({
+            opacity: 1
+        }, 2000, function() {
+            targetLayer.css({
+                "pointer-events" : "auto",
+                "z-index" : 9,
+                "overflow" : "auto"               
+            });
+        });
 
         this.backgroundChecker( targetFrame );
 
         this.closeButtonCheck();
-
-        // PRIME NEXT SRC – TO BE LOADED ON MOUSEOUT
-        Data.nextLayerPrimed = true;
 
     },
 

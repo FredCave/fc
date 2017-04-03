@@ -1,6 +1,10 @@
 <!-- STYLES -->
 
-<style>		
+<style>	
+	/* OVERFLOW IMPORTANT FOR SCROLLING ONCE IN IFRAME */
+	html, body {
+	    overflow-y: auto; 
+	}	
 	#wrapper {
 /*		border: 1px solid red;*/
 		margin-left: 25%;

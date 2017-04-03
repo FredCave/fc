@@ -13,15 +13,15 @@ if ( has_tag("exhibition") ) {
 	include("includes/01_exhibition.php");
 }
 // ONCE REMOVED
-else if ( $post->post_name == "once-removed" ) {
+else if ( $post->post_name == "an-image-once-removed" ) {
 	include("includes/02_once_removed.php");
 }
 // NIGHT LIGHT
-else if ( $post->post_name == "night-light" ) {
+else if ( strpos( $post->post_name, "night-light" ) !== false ) {
 	include("includes/03_night_light.php");
 }
 // ALL THAT IS SOLID
-else if ( $post->post_name == "all-that-is-solid" ) {
+else if ( $post->post_name == "all-that-is-solid-melts-into-aether" ) {
 	include("includes/04_all_that_is_solid.php");
 }
 // SUBLIMATIONS
@@ -33,7 +33,7 @@ else if ( $post->post_name == "the-wake-of-dust" ) {
 	include("includes/07_the_wake_of_dust.php");
 }
 // EDEN BOOK
-else if ( $post->post_name == "eden-book" ) {
+else if ( $post->post_name == "eden" ) {
 	include("includes/08_eden_book.php");
 }
 

@@ -1,7 +1,7 @@
         </div><!-- END OF #WRAPPER -->
 
         <?php if ( is_home() ) { ?>
-
+        	<?php /*
 	        <script type="text/javascript" src="<?php bloginfo( 'template_url' ); ?>/js/narcissus.json"></script>
 	        <script type="text/javascript" src="http://www.botlibre.com/scripts/sdk.js"></script>
 			<script type="text/javascript">
@@ -15,14 +15,22 @@
 				web.speak = false;
 				// web.greet();
 			</script>
-
+			*/ ?>
 		<? } else { ?>
 			<script type="text/javascript" src="<?php bloginfo( 'template_url' ); ?>/js/underscore-min.js"></script>
 			<script>
 			$(document).on( "ready", function(){
 
+				// console.log("Project footer ready.");
+
+			 //    $("html,body").on("scroll", function(){
+
+			 //        console.log( $(this), " scrolling.");
+
+			 //    });
+
 			    function imageSize () {
-			        console.log("imageSize");
+			        // console.log("imageSize");
 			        $("img").each( function(){
 			            var wrapper = $(this).width(),
 			                url = "";
@@ -45,7 +53,7 @@
 			                // THUMB
 			                url = $(this).attr("data-tmb");
 			            }
-			            console.log(48, wrapper, url);
+			            // console.log(48, wrapper, url);
 			            $(this).attr("src",url);       
 			        });   
 			       

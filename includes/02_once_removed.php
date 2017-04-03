@@ -69,9 +69,9 @@ function get_images ( $side ) {
 <!-- STYLES -->
 
 <style>
-body {
-/*    background-color: black;*/
-}            
+html, body {
+/*    overflow-y: auto; */
+}          
 #bg_image {
     width: 100%;
     height: 100vh;   
@@ -114,7 +114,7 @@ body {
     padding: 0;
     margin: 0;
 }
-#right_wrapper {
+#right {
     left: inherit;
     right: 0%;
 }
@@ -133,7 +133,7 @@ body {
             filter: blur(5px);
     display: none;
 }
-#right_wrapper > div {
+#right > div {
     left: 0;
     right: inherit;
 }
@@ -141,55 +141,7 @@ body {
     display: block;
 }
 
-#drawing_board {
-    position: fixed;
-    z-index: 9999;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: white;
-    opacity: 0.1;
-    display: none;
-}
 
-#record {
-    border: 1px solid black;
-    background-color: white;
-    height: 100%;
-    width: 25%;
-    position: fixed;
-    z-index: 99999;
-    top: 0;
-    right: 0;
-    font-size: 0.8em;
-    display: none;
-}
-
-#once {
-/*    border: 1px solid red;*/
-    position: fixed;
-    z-index: 99;
-/*    top: -10px;
-    left: -135px;*/
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-}
-
-#once .point {
-/*    background-color: white;*/
-    border-radius: 8px;
-    width: 16px;
-    height: 16px;
-    position: absolute;
-    box-shadow: 5px 5px 20px #8B4513;
-    transition: all 5s;
-/*    background-image: url("http://localhost:8888/fredcave/wp-content/uploads/2017/01/Fred-Cave-Once-Removed.jpg");
-    background-position: center;*/
-
-}
 
 </style>
 
@@ -199,7 +151,7 @@ body {
     $(document).on("ready", function(){
         // BACKGROUND IMAGE SIZING
         function bgImageSize () {
-            console.log("bgImageSize");
+            // console.log("bgImageSize");
             $(".resize, .visible").each( function(){
                 var thisId = $(this).attr("id"),
                     wrapperW = $(".wrapper").height(),
@@ -230,7 +182,7 @@ body {
         } 
         // IMAGES INIT
         function imagesInit () {
-            console.log("imagesInit");
+            // console.log("imagesInit");
             $(".wrapper div:first-child").addClass("resize");
             $(".wrapper div").css({
                 "-webkit-filter" : "blur(0px)", 
@@ -244,7 +196,7 @@ body {
         }
         // SLIDESHOW
         function imageChange ( wrapper ) {
-            console.log("imageChange");
+            // console.log("imageChange");
             var vis = wrapper.find(".visible");
             // IF NEXT
             if ( vis.next().length ) {
@@ -270,7 +222,7 @@ body {
             }, delay * 1000 );
         }
         function slideInit() {
-            console.log("slideInit");
+            // console.log("slideInit");
             $(".wrapper").each( function(){
                 slideShow( $(this) );
             });
@@ -297,10 +249,10 @@ body {
     <img src="<?php bloginfo('template_url'); ?>/assets/img/once_removed.svg" />
 </div>
 
-<ul id="left_wrapper" class="wrapper">
+<ul id="left" class="wrapper">
     <?php get_images("left"); ?>
 </ul>
 
-<ul id="right_wrapper" class="wrapper">
+<ul id="right" class="wrapper">
     <?php get_images("right"); ?>
 </ul>

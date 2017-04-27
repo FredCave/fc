@@ -2,13 +2,19 @@ var app = app || {};
 
 app.AppView = Backbone.View.extend({
 	
-	initialize: function ( section ) {
+	initialize: function ( page ) {
 
-		console.log("AppView.initialize");
+		console.log("AppView.initialize", page);
 
 		this.bindEvents();
 
-		this.loadSources();
+        app.Data.current = page;
+
+        if ( page === "home" ) {
+            this.loadHome();
+        } else {
+            this.loadProject(page);
+        }
 
 	},
 
@@ -40,42 +46,18 @@ app.AppView = Backbone.View.extend({
 
 	},
 
-	infoFadeIn: function () {
+    loadHome: function () {
 
-		console.log("AppView.infoFadeIn");
-
-		$(".info_hidden").css({
-			"opacity": 1
-		});
-
-		$(".current").css({
-			"opacity": 0.6
-		});
-
-	},
-
-	infoFadeOut: function () {
-
-		console.log("AppView.infoFadeOut");
-
-		$(".info_hidden").css({
-			"opacity": 0
-		});
-
-		if ( $("#home_wrapper").hasClass("info_wrapper") ) {
-			$(".current").css({
-				"opacity": 1
-			});
-		}
-
-	},	
-
-    loadSources: function () {
-
-        console.log("AppView.loadSources");
+        console.log("AppView.loadHome");
 
         var self = this;
 
+        // FADE IN INFO
+        $("#home_wrapper").animate({
+            opacity: 1
+        }, 1000 ).removeClass("info_hidden");
+
+        // LOAD SOURCES
         app.projects = new app.ProjectCollection();
         app.projects.fetch().then( function(){
             
@@ -87,34 +69,159 @@ app.AppView = Backbone.View.extend({
                 firstDesc = first.attributes.description,
                 firstYear = first.attributes.year;
 
-            // UPDATE NEXT PROJECT TO BE LOADED
-            app.Data.nextProject++;
+            // UPDATE NEXT PROJECT TO BE LOADED 
+            // MOVED TO PREPNEXT
+            // app.Data.nextProject++;
 
             // APPEND NEW LAYER
             $("#layer_wrapper").append("<div id='" + app.Data.zIndex + "' class='layer'><iframe data-slug='" + firstSlug + "' src='" + firstUrl + "'></iframe></div>");
             app.Data.zIndex++;
 
-            // LOAD NEXT CAPTION
-            app.AppView.nextCaption = {
-                title : firstTitle,
-                description: firstDesc,
-                year: firstYear
-            }
-
-            // ADD LINK TO HYPERLINK
-            $("#hyperlink a").attr("href","#" + firstSlug);  
-            app.Data.srcLoaded = true;          
-
-            self.updateCaption();
-           
-            // PLACE HYPERLINK
-            self.placeHyperLink();
+            self.prepNext();
 
         });
 
     },
 
+    loadProject: function () {
+
+        console.log("AppView.loadProject");
+
+        // LOAD PROJECT
+
+        var self = this,
+            current = app.Data.current;
+
+        // LOAD PROJECT
+        var thisModel = new app.ProjectModel();
+        thisModel.fetch({ 
+            data: $.param({ name: current })
+        }).then( function(){
+
+            console.log( 17, thisModel );
+
+            // LOAD FIRST SRC
+            var firstUrl = thisModel.attributes[0].url,
+                firstTitle = thisModel.attributes[0].title,
+                firstSlug = thisModel.attributes[0].slug,
+                firstDesc = thisModel.attributes[0].description,
+                firstYear = thisModel.attributes[0].year;
+
+            // APPEND NEW LAYER
+            $("#layer_wrapper").append("<div id='" + app.Data.zIndex + "' class='layer'><iframe data-slug='" + firstSlug + "' src='" + firstUrl + "'></iframe></div>");
+            app.Data.zIndex++;
+
+            // SHOW LAYER
+            $(".layer").last().css({
+                "opacity": 1,
+                "pointer-events": "auto"
+            }).addClass("current");
+
+            // SHOW CLOSE BUTTON
+            $("#close_button").fadeIn();
+
+            // DEFINE HOME INFO AS HIDDEN
+            $("#home_wrapper").addClass("info_hidden");
+
+            // LOAD SOURCES
+            app.projects = new app.ProjectCollection();
+            app.projects.fetch().then( function(){
+                
+                // PREPARE NEXT LAYER (HYPERLINK + CAPTION)
+                self.prepNext();
+
+            });
+
+        });    
+
+    },
+
+    loadNextProject: function () {
+
+        console.log("AppView.loadNextProject");
+
+        // CALLED ON HYPERLINK CLICK
+    
+        var self = this;
+
+        // DEACTIVATE + MOVE HYPERLINK
+        app.Data.hyperLinkActive = false;
+        this.placeHyperLink();
+
+        // HIDE CAPTION
+        $("#caption_wrapper").css({
+            opacity: 0
+        });
+
+        // HIDE INFO
+        $("#home_wrapper").css({
+            opacity: 0
+        }).addClass("info_hidden");        
+
+        // FADE IN LAYER
+        $(".current").removeClass("current");
+        $(".layer").last().css({
+            "opacity": 1,
+            "pointer-events": "auto"
+        }).addClass("current");
+
+        this.backgroundChecker( $(".layer").last().find("iframe") );
+
+        // SHOW CLOSE BUTTON
+        $("#close_button").fadeIn();
+
+        app.Data.projectVis = true;
+
+        // PREP NEXT
+        setTimeout( function(){
+
+            //  app.Data.hyperLinkActive = true;
+            
+            self.prepNext();
+            // REMOVE ONE BEFORE LAST
+            if ( $("#layer_wrapper .layer").length > 2 ) {
+                $(".layer").first().remove();
+            }
+
+        }, 1500 );
+
+    },
+
+	infoFadeIn: function () {
+
+		console.log("AppView.infoFadeIn");
+
+		$(".info_hidden").css({
+			"opacity": 1
+		});
+  
+		$(".current").css({
+			"opacity": 0.6
+		});
+
+	},
+
+	infoFadeOut: function () {
+
+		console.log("AppView.infoFadeOut");
+
+        // CLASS ADDED SO INFO IS NOT HIDDEN ON MOUSEOUT ONCE CLICKED
+
+		$(".info_hidden").css({
+			"opacity": 0
+		});
+
+		if ( $("#home_wrapper").hasClass("info_hidden") ) {
+			$(".current").css({
+				"opacity": 1
+			});
+		}
+
+	},	
+
     linkClick: function () {
+
+        // NO LONGER USED
 
     	// console.log("AppView.linkClick");
 
@@ -185,58 +292,10 @@ app.AppView = Backbone.View.extend({
 
     },
 
-    showProject: function () {
-
-        console.log("AppView.showProject");
-
-	    // DEACTIVATE + MOVE HYPERLINK
-    	app.Data.hyperLinkActive = false;
-    	this.placeHyperLink();
-
-        var self = this;
-
-        // HIDE CAPTION
-        $("#caption_wrapper").css({
-            opacity: 0
-        });
-
-        // HIDE INFO
-        $("#home_wrapper").css({
-            opacity: 0
-        }).addClass("info_hidden");        
-
-        // FADE IN LAYER
-        $(".current").removeClass("current");
-        $(".layer").last().css({
-            "opacity": 1,
-            "pointer-events": "auto"
-        }).addClass("current");
-
-		this.backgroundChecker( $(".layer").last().find("iframe") );
-
-        // SHOW CLOSE BUTTON
-        $("#close_button").fadeIn();
-
-		app.Data.projectVis = true;
-
-        // LOAD NEXT LAYER
-        setTimeout( function(){
-
-            app.Data.hyperLinkActive = true;
-            self.prepNext();
-            // REMOVE ONE BEFORE LAST
-			if ( $("#layer_wrapper .layer").length > 2 ) {
-				$(".layer").first().remove();
-            }
-
-        }, 1500 );
-
-    },
-
     prepNext: function () {
 
         console.log("AppView.prepNext");
-       
+
         // HIDE CAPTION
         $("#caption_wrapper").css({
             opacity: 0
@@ -245,10 +304,10 @@ app.AppView = Backbone.View.extend({
         // UPDATE NEXT PROJECT TO BE LOADED
         console.log( 221, app.Data.nextProject, app.projects.length );
         if ( app.Data.nextProject < app.projects.length - 1 ) {
-			app.Data.nextProject++;
+            app.Data.nextProject++;
         } else {
-        	console.log( 225, "Back to the start." );
-			app.Data.nextProject = 0;
+         console.log( 225, "Back to the start." );
+            app.Data.nextProject = 0;
         }
 
         // GET NEXT PROJECT
@@ -259,16 +318,7 @@ app.AppView = Backbone.View.extend({
             nextDesc = nextProject.attributes.description,
             nextYear = nextProject.attributes.year;
 
-        console.log( 169, nextTitle );
-
-        // UPDATE NEXT LAYER
-        // app.Data.updateNextLayer();
-
-        // APPEND NEW LAYER
-        $("#layer_wrapper").append("<div id='" + app.Data.zIndex + "' class='layer'><iframe data-slug='" + nextSlug + "' src='" + nextUrl + "'></iframe></div>");
-        app.Data.zIndex++;
-
-        // UPDATE HYPERLINK + CAPTION
+        // LOAD NEXT CAPTION
         app.AppView.nextCaption = {
             title : nextTitle,
             description: nextDesc,
@@ -276,9 +326,16 @@ app.AppView = Backbone.View.extend({
         }
         this.updateCaption();
 
-        $("#hyperlink a").attr("href","#" + nextSlug); 
+        // APPEND NEW LAYER
+        $("#layer_wrapper").append("<div id='" + app.Data.zIndex + "' class='layer'><iframe data-slug='" + nextSlug + "' src='" + nextUrl + "'></iframe></div>");
+        app.Data.zIndex++;
 
-        // REACTIVATE HYPERLINK
+        // ADD LINK TO HYPERLINK
+        $("#hyperlink a").attr("href","#" + nextSlug);  
+        app.Data.srcLoaded = true;          
+   
+        // PLACE + REACTIVATE HYPERLINK 
+        this.placeHyperLink();
         app.Data.hyperLinkActive = true;
 
     },
@@ -334,8 +391,6 @@ app.AppView = Backbone.View.extend({
 	    }, delay );
 
 	},
-
-
 
 	nextFadeIn: function () {
 

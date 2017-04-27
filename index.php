@@ -13,6 +13,8 @@
                         <?php the_field("info_intro"); ?>
                     </div>
 
+                    <p>void.xxx</p>
+
                     <?php /* 
                     <!-- PROJECTS -->
                     <div class="info_projects info">

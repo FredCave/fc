@@ -16,11 +16,7 @@ app.Data = {
 
     zIndex: 1,
 
-    // updateNextLayer: function () {
-        
-    //     this.nextLayer = this.nextLayer === 0 ? 1 : 0;
-
-    // }
+    current: ""
 
 }
 

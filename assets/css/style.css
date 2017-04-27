@@ -81,6 +81,11 @@ hr {
     margin-left: 0;
 }
 
+#layer_wrapper {
+    position: fixed;
+    top: 0;
+}
+
 .layer {
 /*    border: 2px solid purple;*/
     -webkit-transform: translateZ(0);
@@ -103,7 +108,10 @@ hr {
     width: 100%;
     height: 100%;  
     overflow: hidden;
-    pointer-events: auto;
+}
+
+.current iframe {
+    pointer-events: auto;    
 }
 
 #close_button {
@@ -360,6 +368,8 @@ hr {
     padding-bottom: 400px;
     padding-bottom: 25vh;
 }
+
+
 
 
 

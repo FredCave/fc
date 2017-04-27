@@ -42,26 +42,24 @@ app.MainRouter = Backbone.Router.extend({
 
         // CLEAN UP HASH – ???
         history.pushState("#", document.title, window.location.pathname + window.location.search);
-
-        // HOME
-        // new app.AppView();
-
-        $("#home_wrapper").animate({
-            opacity: 1
-        }, 1000 ).removeClass("info_hidden");
-
+        
+        // IF ARRIVING FROM PROJECT
         if ( app.Data.projectVis ) {
+            
             $("#close_button").fadeOut(1000);
             $(".layer").css({
                 "opacity" : 0,
                 "pointer-events" : "none"
-            });
+            }).removeClass("current");
             $("#hyperlink").removeClass("inverted");
+
+            $("#home_wrapper").removeClass("info_hidden");
+
         } else {
-            console.log("No projects visible.");
-            
-            appView = new app.AppView();
-            
+
+            console.log("New load.");
+            appView = new app.AppView("home");
+
         }
 
     },
@@ -72,9 +70,9 @@ app.MainRouter = Backbone.Router.extend({
 
         // IF ALREADY LOADED
         if ( app.Data.srcLoaded ) {
-            appView.showProject();
+            appView.loadNextProject();
         } else {
-            new app.ProjectView("sublimations");            
+            appView = new app.AppView("sublimations");            
         }
 
     },
@@ -85,9 +83,9 @@ app.MainRouter = Backbone.Router.extend({
         
         // IF ALREADY LOADED
         if ( app.Data.srcLoaded ) {
-            appView.showProject();
+            appView.loadNextProject();
         } else {
-            new app.ProjectView("eden");
+            appView = new app.AppView("eden");
         }
 
     },
@@ -98,9 +96,9 @@ app.MainRouter = Backbone.Router.extend({
 
         // IF ALREADY LOADED
         if ( app.Data.srcLoaded ) {
-            appView.showProject();
+            appView.loadNextProject();
         } else {
-            new app.ProjectView("the-wake-of-dust");
+            appView = new app.AppView("the-wake-of-dust");
         }
 
     },
@@ -111,9 +109,9 @@ app.MainRouter = Backbone.Router.extend({
 
         // IF ALREADY LOADED
         if ( app.Data.srcLoaded ) {
-            appView.showProject();
+            appView.loadNextProject();
         } else {
-            new app.ProjectView("narcissus-dissolve");
+            appView = new app.AppView("narcissus-dissolve");
         }
 
     },
@@ -124,9 +122,9 @@ app.MainRouter = Backbone.Router.extend({
 
         // IF ALREADY LOADED
         if ( app.Data.srcLoaded ) {
-            appView.showProject();
+            appView.loadNextProject();
         } else {
-            new app.ProjectView("all-that-is-solid-melts-into-aether");
+            appView = new app.AppView("all-that-is-solid-melts-into-aether");
         }
 
     },
@@ -137,9 +135,9 @@ app.MainRouter = Backbone.Router.extend({
 
         // IF ALREADY LOADED
         if ( app.Data.srcLoaded ) {
-            appView.showProject();
+            appView.loadNextProject();
         } else {
-            new app.ProjectView("night-light");
+            appView = new app.AppView("night-light");
         }
 
     },
@@ -150,9 +148,9 @@ app.MainRouter = Backbone.Router.extend({
 
         // IF ALREADY LOADED
         if ( app.Data.srcLoaded ) {
-            appView.showProject();
+            appView.loadNextProject();
         } else {
-            new app.ProjectView("an-image-once-removed");
+            appView = new app.AppView("an-image-once-removed");
         }
 
     },
@@ -163,9 +161,9 @@ app.MainRouter = Backbone.Router.extend({
 
         // IF ALREADY LOADED
         if ( app.Data.srcLoaded ) {
-            appView.showProject();
+            appView.loadNextProject();
         } else {
-            new app.ProjectView("dogwood-ii");
+            appView = new app.AppView("dogwood-ii");
         }
 
     },
@@ -176,9 +174,11 @@ app.MainRouter = Backbone.Router.extend({
 
         // IF ALREADY LOADED
         if ( app.Data.srcLoaded ) {
-            appView.showProject();
+            console.log("Data already loaded.");
+            appView.loadNextProject();
         } else {
-            new app.ProjectView("the-electronic-cottage");
+            console.log("New load.");
+            appView = new app.AppView("the-electronic-cottage");
         }
 
     },
@@ -189,9 +189,9 @@ app.MainRouter = Backbone.Router.extend({
 
         // IF ALREADY LOADED
         if ( app.Data.srcLoaded ) {
-            appView.showProject();
+            appView.loadNextProject();
         } else {
-            new app.ProjectView("after-party");
+            appView = new app.AppView("after-party");
         }
 
     },
@@ -202,9 +202,9 @@ app.MainRouter = Backbone.Router.extend({
 
         // IF ALREADY LOADED
         if ( app.Data.srcLoaded ) {
-            appView.showProject();
+            appView.loadNextProject();
         } else {
-            new app.ProjectView("93-to-infinity");
+            appView = new app.AppView("93-to-infinity");
         }
 
     }

@@ -6,7 +6,10 @@ app.ProjectView = Backbone.View.extend({
 
 		console.log("ProjectView.initialize", slug);
 
-		// this.bindEvents();
+		// EQUIVALENT TO LOADING URL IN HYPERLINK
+		// THEN CLICK
+
+		
 
 		// var self = this;
 
@@ -20,11 +23,22 @@ app.ProjectView = Backbone.View.extend({
 
 		// 	self.src = thisModel.attributes[0].url;
 
+		// 	console.log( 25, $(".layer").last() );
+
 		// 	// LOAD SOURCE TO IFRAME
-		// 	$(".layer").eq( app.Data.nextLayer ).find("iframe").attr("src", self.src);
+		// 	$(".layer").last().find("iframe").attr("src", self.src);
+
+		// 	$(".layer").last().css({
+  //           	"opacity": 1,
+  //           	"pointer-events": "auto"
+  //      		}).addClass("current");
+
+		// 	appView = new app.AppView();
+
+		// 	appView.backgroundChecker( $(".layer").last().find("iframe") );
 
 		// 	// SHOW LAYER
-		// 	self.showProject();
+		// 	// appView.showProject();
 
 		// });
 
@@ -32,11 +46,11 @@ app.ProjectView = Backbone.View.extend({
 
 	bindEvents: function () {
 
-		console.log("ProjectView.bindEvents");
+		// console.log("ProjectView.bindEvents");
 
-		$("#close_button a").on("click", function(){
-            console.log("Close button clicked.");
-        });
+		// $("#close_button a").on("click", function(){
+  //           console.log("Close button clicked.");
+  //       });
 
 	}
 
